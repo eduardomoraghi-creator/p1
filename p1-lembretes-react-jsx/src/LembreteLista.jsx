@@ -4,55 +4,55 @@ class LembreteLista extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      visivel: true, //controla se o lembrete deve ser exibido ou não (inicializa visível)
-      favorito: false // controla se o lembrete está marcado como favorito (inicializa não favorito)
+      visivel: true,
+      favorito: false
     };
   }
 
   remover = () => {
-    this.setState({ visivel: false });//função que atualiza o state para falso,
-    //disparando a renderização e deixando de mostrar o lembrete (bilhete permanece no array)
+    this.setState({ visivel: false });//função que quando chamada (clique no icone trash 
+    // do componente), altera "visivel" para false e re-renderiza o estado fazendo com que
+    //aquele componente deixe de ser mostrado na tela (apesar de constar no array bilhetes) 
   };
 
   alternarFavorito = () => {
-    this.setState((state) => ({ favorito: !state.favorito }));
-    // Função para chavear o valor entre favorito e não favorito
-    // Dispara a re-renderização e servirá para atualizar a visualização do botão (star e papperclip)
+    this.setState((state) => ({ favorito: !state.favorito })); // "Inverte o valor de
+    // 'favorito' do lembrete atual. Chamado ao clicar no ícone de estrela/paperclip."
+
   };
 
   render() {
+    const { visivel, favorito } = this.state;
+    const { mostrarFavoritos, children } = this.props; //this.props contem o que foi passado
+    // pelo App (pai) do estado da variável mostrarFavoritos e children vindos do App 
 
-    if (!this.state.visivel) return null; //se visivel for false retorna null, o que faz com que o 
-    //componente bilhete que teve click botão remover (trash) , não seja renderizado na tela 
-    //React entende que o componente retornando null, não deve criar nada no DOM .
-    //lembrando que não altera o array no App Pai.
-
-
+    // Se o filtro de favoritos estiver ativo e o bilhete estiver marcado como não 
+    // favorito (!favorito) OU se o bilhete tiver sido removido (clicando no icone trash)
+    // (!visivel), então retorna null e não será renderizado.
+    if (!visivel || (mostrarFavoritos && !favorito)) return null;
 
     return (
       <div
         className="d-flex border pt-3 pb-3 px-3 rounded-3 mb-3 ms-3 me-3"
-        style={{ backgroundColor: "#fdefd2ff" }}>
-
-        {/* recebe texto do lembrete passado pelo App, via props.children */}
-        {/* o uso de props.children permite renderizar "qualquer outro componente React" */}
-        <h6 className="mb-0 flex-grow-1 text-center">{this.props.children}</h6>
+        style={{ backgroundColor: "#fdefd2ff" }}
+      >
+        <h6 className="mb-0 flex-grow-1 text-center">{children}</h6>
 
         <button
-          className={`btn btn-sm me-1 ${this.state.favorito ? "btn-outline-success" : "btn-warning"}`}
-          onClick={this.alternarFavorito}
+          className={`btn btn-sm me-1 ${favorito ? "btn-outline-success" : "btn-warning"}`}
+          onClick={this.alternarFavorito} //chama a função para alterar o estado
+          // favorito/não favorito do bilhete.
         >
-          {this.state.favorito ? (
+          {favorito ? (
             <i className="fa-classic fa-star"></i>
           ) : (
             <i className="fa-solid fa-paperclip"></i>
           )}
         </button>
 
-        <button
-          className="btn btn-sm btn-outline-danger"
-          onClick={this.remover}  //chama a função remover ao clicar na lixeira (icon trash)
-        >
+        {/* oculta (não remove do array) o lembrete da tela alterando a variável
+        'visivel' para false.*/}
+        <button className="btn btn-sm btn-outline-danger" onClick={this.remover}>
           <i className="fa-regular fa-trash-can"></i>
         </button>
       </div>
@@ -61,4 +61,3 @@ class LembreteLista extends React.Component {
 }
 
 export default LembreteLista;
-
